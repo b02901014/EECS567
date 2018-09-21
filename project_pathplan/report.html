@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <h1>EEC567 HW1 Report - Path Planning</h1>
+      <h2>Chung-Hsun Wang</h2>
+  </head>
+  <style>
+    figure{
+      float:left;
+      text-align:center;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    img{
+      width: 350px;
+      height: 350px;
+    }
+
+    p, h1, h2, h3 {
+      font-family: Sans-serif;
+    }
+
+    .last {
+      clear: both; 
+      float: left; 
+      display: block; 
+      position: relative; 
+  }
+  </style>
+  <body>
+
+  <h3><b>1. Depth-first search algorithm</b></h3>
+  <p>
+   The results for different scenes are shown below. From the pictures, we can observe that depth-first search   algorithm searched the entire column first, took a step to the right,then searched the new column. Also we can see the queue size was larger than other algorithms. As a result, it is hard for the algorithm to find the optimal path, since the order for pushing unvisited neighbors to the queue matters. Fig.6 to Fig.8 show how the order affected the seaching process.  
+  </p>
+    <figure>
+      <img src="images/dfs_empty.png" alt="empty">
+      <figcaption>Fig.1 empty</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/dfs_misc.png" alt="misc">
+      <figcaption>Fig.2 misc</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/dfs_narrow1.png" alt="narrow1">
+      <figcaption>Fig.3 narrow1</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/dfs_narrow2.png" alt="narrow2">
+      <figcaption>Fig.4 narrow2</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/dfs_three_sections.png" alt="three_sections">
+      <figcaption>Fig.5 three sections</figcaption>
+    </figure>
+    <div class = "last">
+      <p><b>The order for visiting the neighbors resulted in different paths</b></p>
+    <figure>
+      <img src="images/dfs_narrow1.png" alt="narrow1">
+      <figcaption>Fig.6</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/dfs_down.png" alt="narrow1">
+      <figcaption>Fig.7</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/dfs_right.png" alt="narrow1">
+      <figcaption>Fig.8</figcaption>
+    </figure>
+    </div>
+
+    <div class="last">
+    <h3><b>2. Breadth-first search algorithm</b></h3>
+   <p>
+   The results for different scenes are shown below. We can observe that on each iteration, breadth-first 
+   search algorithm followed the edge of a square to search. It doesn't know the exact position of target. 
+   Although the breadth-first search algorithm (explore all the unvisited neighbors first) might explore more   nodes than depth-first search algorithm, bread-first search algorithm can find the optimal path if the path cost is non-decreasing.
+
+   </p>
+    <figure>
+      <img src="images/bfs_empty.png" alt="empty">
+      <figcaption>Fig.1 empty</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/bfs_misc.png" alt="misc">
+      <figcaption>Fig.2 misc</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/bfs_narrow1.png" alt="narrow1">
+      <figcaption>Fig.3 narrow1</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/bfs_narrow2.png" alt="narrow2">
+      <figcaption>Fig.4 narrow2</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/bfs_three_sections.png" alt="three_sections">
+      <figcaption>Fig.5 three sections</figcaption>
+    </figure>
+
+    </div>
+
+    <div class = "last">
+   <h3><b>3. Greedy best-first search algorithm</b></h3>
+   <p>
+    The results for different scenes are shown below. Since the greedy best-first search algorithm only used 
+    the distance of current node and goal node (h_value), the algorithm searched rapidly if there was no 
+    obstacle on at the direction to goal node, like in Fig.1, Fig.3, and Fig.4. However, from Fig.2 and Fig.5     we can observe that if there were obstacles at the direction of goal node, it cost a lot more time for searching, and does not guarantee optimality (Fig.2). 
+   </p>
+    <figure>
+      <img src="images/gbf_empty.png" alt="empty">
+      <figcaption>Fig.1 empty</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/gbf_misc.png" alt="misc">
+      <figcaption>Fig.2 misc</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/gbf_narrow1.png" alt="narrow1">
+      <figcaption>Fig.3 narrow1</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/gbf_narrow2.png" alt="narrow2">
+      <figcaption>Fig.4 narrow2</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/gbf_three_sections.png" alt="three_sections">
+      <figcaption>Fig.5 three sections</figcaption>
+    </figure>
+
+   </div> 
+    <div class = "last">
+   <h3><b>4. A-star algorithm</b></h3>
+   <p>
+   The results for different scenes are shown below. We can observe that of A-star algorithm kept the size of queue small, and found optimal paths in all five planning scenes. However, in some simple scenes (Fig.1), it took longer time and more iterations than greedy-best-first algorithm.
+   </p>
+    <figure>
+      <img src="images/astar_empty.png" alt="empty">
+      <figcaption>Fig.1 empty</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/astar_misc.png" alt="misc">
+      <figcaption>Fig.2 misc</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/astar_narrow1.png" alt="narrow1">
+      <figcaption>Fig.3 narrow1</figcaption>
+    </figure>
+    
+    <figure>
+      <img src="images/astar_narrow2.png" alt="narrow2">
+      <figcaption>Fig.4 narrow2</figcaption>
+    </figure>
+
+    <figure>
+      <img src="images/astar_three_sections.png" alt="three_sections">
+      <figcaption>Fig.5 three sections</figcaption>
+    </figure>
+   </div>
+   </body>
+</html>
+
