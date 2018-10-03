@@ -67,6 +67,7 @@ function init() {
     pendulum.angle_previous = [0,0];
 
     // initialize pendulum controls
+    rand = false;
     pendulum.angle_dottwo = [0,0];
     pendulum.angle_next = [0,0];
     pendulum.control = [0,0];
@@ -150,6 +151,12 @@ function animate() {
 
     // STENCIL: implement servo controller
     if (servo_active_persist){
+      if(!rand){
+        for(var i = 0; i < 2; ++i){
+          pendulum.desired[i] = Math.random() * 2 * Math.PI - Math.PI;
+          rand = true;
+        }
+      }
       for (var i = 0; i < 2; i++){ 
         var error = pendulum.desired[i] - pendulum.angle[i];
         var error_dot = pendulum.desired_dot[i] - pendulum.angle_dot[i];
@@ -159,6 +166,8 @@ function animate() {
           pendulum.servo.kd*error_dot;
         }
     }
+    
+    else rand = false;
 
     // toggle activation of servo controller from user interaction
     if (keyboard.pressed("c"))
