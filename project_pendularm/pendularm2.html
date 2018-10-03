@@ -80,7 +80,7 @@ function init() {
     gravity = 9.81;  // Earth gravity
 
     // initialize pendulum PID servo gains
-    pendulum.servo = {kp:200, kd:20, ki:20};  // no control
+    pendulum.servo = {kp:300, kd:50, ki:50};  // no control
 
     // initialize time and set timestep 
     t = 0;
@@ -155,7 +155,7 @@ function animate() {
         var error_dot = pendulum.desired_dot[i] - pendulum.angle_dot[i];
         accumulated_error[i] += error*dt;
         pendulum.control[i] = pendulum.servo.kp*error + 
-          pendulum.servo.ki*accumulated_error[i] + 
+          pendulum.servo.ki*accumulated_error[i] * dt+ 
           pendulum.servo.kd*error_dot;
         }
     }
@@ -188,117 +188,9 @@ function animate() {
         pendulum.angle_dot[1] = (pendulum.angle[1]-pendulum.angle_previous[1])/dt;
         numerical_integrator = "none";
     }
-    else if(numerical_integrator === "euler"){
-      verlet_check = false;
-      var a1 = (pendulum.mass[0] + pendulum.mass[1]) * pendulum.length[0];
-      var b1 = pendulum.mass[1] * pendulum.length[1] * 
-        Math.cos(pendulum.angle[0] - pendulum.angle[1]);
-      var c1 = pendulum.mass[1] * pendulum.length[1] * pendulum.angle_dot[1]**2 * 
-        Math.sin(pendulum.angle[0] - pendulum.angle[1])+ 
-        (pendulum.mass[0] + pendulum.mass[1]) * gravity * Math.sin(pendulum.angle[0]);
-        - pendulum.control[0];
 
-      var a2 = pendulum.length[0] * Math.cos(pendulum.angle[0] - pendulum.angle[1]);
-      var b2 = pendulum.length[1];
-      var c2 = -pendulum.length[0] * pendulum.angle_dot[0]**2 * 
-        Math.sin(pendulum.angle[0] - pendulum.angle[1]) + gravity * Math.sin(pendulum.angle[1])
-        - pendulum.control[1];
-
-      var ang_dotdot = [(b1 * c2 - c1 * b2) / (a1 * b2 - b1 * a2),
-                        (a1 * c2 - c1 * a2) / (b1 * a2 - a1 * b2)]
-      for(var i = 0; i < 2; ++i){
-        pendulum.angle[i] += pendulum.angle_dot[i] * dt;
-        pendulum.angle_dot[i] += ang_dotdot[i] * dt;
-      }
-    }
-
-    else if (numerical_integrator === "verlet") {
-      var tmp = [pendulum.angle[0], pendulum.angle[1]];
-      
-      var a1 = (pendulum.mass[0] + pendulum.mass[1]) * pendulum.length[0];
-      var b1 = pendulum.mass[1] * pendulum.length[1] * 
-            Math.cos(pendulum.angle[0]-pendulum.angle[1]);
-      var c1 = pendulum.mass[1] * pendulum.length[1] * pendulum.angle_dot[1]**2 * 
-            Math.sin(pendulum.angle[0]-pendulum.angle[1]) + 
-            (pendulum.mass[0] + pendulum.mass[1]) * gravity * Math.sin(pendulum.angle[0]) - 
-            pendulum.control[0];
-        
-      var a2 = pendulum.length[0] * Math.cos(pendulum.angle[0] - pendulum.angle[1]);
-      var b2 = pendulum.length[1];
-      var c2 = gravity*Math.sin(pendulum.angle[1]) - pendulum.length[0] * 
-          pendulum.angle_dot[0]**2 * Math.sin(pendulum.angle[0]-pendulum.angle[1]) - 
-          pendulum.control[1];
-
-      var angle_dotdot = [(b1 * c2 - c1 * b2) / (a1 * b2 - b1 * a2),
-                          (a1 * c2 - c1 * a2) / (b1 * a2 - a1 * b2)];
-        
-      if(verlet_check){
-        for (i = 0; i < 2; i++){
-          pendulum.angle[i] = 2 * pendulum.angle[i] - pendulum.angle_previous[i] + 
-            angle_dotdot[i] * dt**2;
-          pendulum.angle_previous[i] = tmp[i];
-        }
-      }
-      else{
-        verlet_check = true;
-        for (i = 0; i < 2; i++){
-          pendulum.angle_previous[i] = pendulum.angle[i];  
-          pendulum.angle[i] = pendulum.angle[i] + pendulum.angle_dot[i]*dt + 
-                       0.5 * angle_dotdot[i] * dt**2;
-        }
-      } 
-      
-      for (i = 0; i < 2; i++) 
-          pendulum.angle_dot[i] = (pendulum.angle[i] - pendulum.angle_previous[i])/dt;
-    }
-
-    else if(numerical_integrator === "velocity verlet"){
-      verlet_check = false;
-      var a1 = (pendulum.mass[0] + pendulum.mass[1]) * pendulum.length[0];
-      var b1 = pendulum.mass[1] * pendulum.length[1] * 
-            Math.cos(pendulum.angle[0]-pendulum.angle[1]);
-      var c1 = pendulum.mass[1] * pendulum.length[1] * pendulum.angle_dot[1]**2 * 
-            Math.sin(pendulum.angle[0]-pendulum.angle[1]) + 
-            (pendulum.mass[0] + pendulum.mass[1]) * gravity * Math.sin(pendulum.angle[0]) - 
-            pendulum.control[0];
-        
-      var a2 = pendulum.length[0] * Math.cos(pendulum.angle[0] - pendulum.angle[1]);
-      var b2 = pendulum.length[1];
-      var c2 = gravity*Math.sin(pendulum.angle[1]) - pendulum.length[0] * 
-          pendulum.angle_dot[0]**2 * Math.sin(pendulum.angle[0]-pendulum.angle[1]) - 
-          pendulum.control[1];
-
-      var angle_dotdot = [(b1 * c2 - c1 * b2) / (a1 * b2 - b1 * a2),
-                          (a1 * c2 - c1 * a2) / (b1 * a2 - a1 * b2)];
-
-      for(var i = 0; i < 2; ++i)
-        pendulum.angle[i] += pendulum.angle_dot[i] * dt + 
-          0.5 * angle_dotdot[i] * dt**2;
-
-      
-      a1 = (pendulum.mass[0] + pendulum.mass[1]) * pendulum.length[0];
-      b1 = pendulum.mass[1] * pendulum.length[1] * 
-        Math.cos(pendulum.angle[0]-pendulum.angle[1]);
-      c1 = pendulum.mass[1] * pendulum.length[1] * pendulum.angle_dot[1]**2 * 
-        Math.sin(pendulum.angle[0]-pendulum.angle[1]) + 
-        (pendulum.mass[0] + pendulum.mass[1]) * gravity * Math.sin(pendulum.angle[0]) - 
-        pendulum.control[0];
-      
-      a2 = pendulum.length[0] * Math.cos(pendulum.angle[0] - pendulum.angle[1]);
-      b2 = pendulum.length[1];
-      c2 = gravity*Math.sin(pendulum.angle[1]) - pendulum.length[0] * 
-           pendulum.angle_dot[0]**2 * Math.sin(pendulum.angle[0]-pendulum.angle[1]) - 
-           pendulum.control[1];
-
-      var angle_dotdot_next = [(b1 * c2 - c1 * b2) / (a1 * b2 - b1 * a2),
-                               (a1 * c2 - c1 * a2) / (b1 * a2 - a1 * b2)];
-      for(var i = 0; i < 2; ++i)
-        pendulum.angle_dot[i] += 0.5 * (angle_dotdot[i] + angle_dotdot_next[i]) * dt;
-
-
-    }
-
-    else if(numerical_integrator === "runge-kutta"){
+    //else if(numerical_integrator === "runge-kutta"){
+    else{
       verlet_check = false;
       var kx = [[0, 0, 0, 0], [0, 0, 0, 0]];
       var kv = [[0, 0, 0, 0], [0, 0, 0, 0]];
