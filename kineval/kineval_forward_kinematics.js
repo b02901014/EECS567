@@ -28,25 +28,28 @@ kineval.robotForwardKinematics = function robotForwardKinematics () {
 
 kineval.buildFKTransforms = function buildFKTransforms () {
     traverseFKBase();
-    var i;
-    for (i = 0; i < robot.links[robot.base].children.length; i++){
+    for (let i = 0; i < robot.links[robot.base].children.length; i++)
         traverseFKJoint(robot.links[robot.base].children[i]);
-    }
-    
 }
 
 function traverseFKBase() {
-    var R = matrix_multiply(matrix_multiply(generate_rotation_matrix_Z(robot.origin.rpy[2]),generate_rotation_matrix_Y(robot.origin.rpy[1])),generate_rotation_matrix_X(robot.origin.rpy[0]));
-    var D = generate_translation_matrix(robot.origin.xyz[0], robot.origin.xyz[1], robot.origin.xyz[2]);
-    robot.links[robot.base].xform = matrix_multiply(D,R);
+    let rot_x = generate_rotation_matrix_X(robot.origin.rpy[0]);
+    let rot_y = generate_rotation_matrix_X(robot.origin.rpy[1]);
+    let rot_z = generate_rotation_matrix_X(robot.origin.rpy[2]);
+    let rotate = matrix_multiply(matrix_multiply(rot_x, rot_y), rot_z);
+    let trans = generate_translation_matrix(robot.origin.xyz[0], 
+                                            robot.origin.xyz[1], 
+                                            robot.origin.xyz[2]);
+    robot.links[robot.base].xform = matrix_multiply(trans, rotate);
 
-    var local_headingZ = [[0],[0],[1],[1]];
-    var local_lateralX = [[1],[0],[0],[1]];
+    let local_headingZ = [[0],[0],[1],[1]];
+    let local_lateralX = [[1],[0],[0],[1]];
     robot_heading = matrix_multiply(robot.links[robot.base].xform,local_headingZ);
     robot_lateral = matrix_multiply(robot.links[robot.base].xform,local_lateralX);
     
     if (robot.links_geom_imported) {
-        var offset_xform = matrix_multiply(generate_rotation_matrix_Y(-Math.PI/2),generate_rotation_matrix_X(-Math.PI/2));
+      let offset_xform = matrix_multiply(generate_rotation_matrix_Y(-Math.PI/2),
+                                         generate_rotation_matrix_X(-Math.PI/2));
         robot.links[robot.base].xform = matrix_multiply(robot.links[robot.base].xform, offset_xform);
     }
     
@@ -58,8 +61,7 @@ function traverseFKLink(link) {
     if (typeof robot.links[link].children === 'undefined'){
         return;
     }
-    var i;
-    for (i = 0; i < robot.links[link].children.length; i++){
+    for (let i = 0; i < robot.links[link].children.length; i++){
         traverseFKJoint(robot.links[link].children[i]);
     }
 }
