@@ -170,7 +170,13 @@ function animate() {
     if (typeof numerical_integrator === "undefined")
         numerical_integrator = "none";
 
-    else if (numerical_integrator === "runge-kutta") {
+    else if(numerical_integrator === "none"){
+        pendulum.angle_previous = pendulum.angle;
+        pendulum.angle = (pendulum.angle+Math.PI/180)%(2*Math.PI);
+        pendulum.angle_dot = (pendulum.angle-pendulum.angle_previous)/dt;
+        numerical_integrator = "none";
+    }
+    else{
       // STENCIL: Runge-Kutta 4 integrator
       var kx = [pendulum.angle, 0, 0, 0];
       var kv = [pendulum.angle_dot, 0, 0, 0];
@@ -192,12 +198,6 @@ function animate() {
       }
       
     } 
-    else {
-        pendulum.angle_previous = pendulum.angle;
-        pendulum.angle = (pendulum.angle+Math.PI/180)%(2*Math.PI);
-        pendulum.angle_dot = (pendulum.angle-pendulum.angle_previous)/dt;
-        numerical_integrator = "none";
-    }
 
     // set the angle of the pendulum
     pendulum.geom.rotation.y = pendulum.angle;  // threejs cylinders have their axes along the y-axis
