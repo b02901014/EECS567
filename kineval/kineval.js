@@ -24,26 +24,10 @@
 
 // create the kineval object/namespace
 kineval = {};
-console.log("KinEval: Kinematic Evaluator 3");
+console.log("KinEval: Kinematic Evaluator 1");
 
 // function to initialize KinEval and start its animation loop
 kineval.start = function kinevalExecute() {
-
-    console.log(" **** >>> kineval.start"); 
-    // KinEval should not do anything until there is a robot and a world loaded
-    var x;
-    for (x in robot.links) { 
-        if (typeof links_geom[x] === 'undefined') {
-            console.log("waiting for robot geometries to load"); 
-            //requestAnimationFrame(kineval.start);
-            setTimeout(kineval.start,1000);
-            return; 
-        }
-    }
-    //if (typeof robotLoaded !== 'undefined')
-    //    if (robotLoaded === false) { console.log("waiting for robot to load"); return; requestAnimationFrame(kineval.start) }
-    //if (typeof world.loaded !== 'undefined')
-    //    if (world.loaded === false) return;
 
     // KinEval uses init() to initialize threejs scene, user input, and robot kinematics
     // STUDENT: you should use my_init() instead
@@ -71,7 +55,7 @@ kineval.init = function init() {
 
     // initialize rosbridge connection to robot running ROS, if available
     // KE 2 : uncomment and add toggle 
-    //kineval.initrosbridge();
+    // kineval.initrosbridge();
 
     // call user's initialization
     my_init();
@@ -207,10 +191,10 @@ kineval.robotDraw = function drawRobot() {
             matrix_multiply(
                 generate_translation_matrix(kineval.params.ik_target.position[0][0],kineval.params.ik_target.position[1][0],kineval.params.ik_target.position[2][0]),
                 matrix_multiply(
-                    generate_rotation_matrix_X(kineval.params.ik_target.orientation[0]),
+                    generate_rotation_matrix_Z(kineval.params.ik_target.orientation[2]),
                     matrix_multiply(
                         generate_rotation_matrix_Y(kineval.params.ik_target.orientation[1]),
-                        generate_rotation_matrix_Z(kineval.params.ik_target.orientation[2])
+                        generate_rotation_matrix_X(kineval.params.ik_target.orientation[0])
         ))));
     else 
         var target_mat = matrix_2Darray_to_threejs(generate_translation_matrix(kineval.params.ik_target.position[0][0],kineval.params.ik_target.position[1][0],kineval.params.ik_target.position[2][0]));
@@ -282,10 +266,9 @@ kineval.initParameters = function initParameters() {
 
     // initialize the active joint for user control
     kineval.params.active_link = robot.base;
-    //kineval.params.active_joint = robot.links[kineval.params.active_link].children[0];
 
     if (typeof robot.links[kineval.params.active_link].children === 'undefined')
-        kineval.params.active_joint = Object.keys(robot.joints)[0]
+        kineval.params.active_joint = Object.keys(robot.joints)[0] 
     else
         kineval.params.active_joint = robot.links[kineval.params.active_link].children[0];
 
@@ -303,9 +286,11 @@ kineval.initParameters = function initParameters() {
     kineval.params.dance_pose_index = 0;
     kineval.params.dance_sequence_index = [0,1,2,3,4,5,6,7,8,9];
     if (robot.name === 'fetch') {  // fetch easter egg
-        kineval.params.dance_sequence_index = [1,2,1,2,1,0,3,0,3,0];
+        kineval.params.dance_sequence_index = [0,1,0,2,0,3,0,4,0,5];
         kineval.setpoints = 
-            [{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0.04,"l_gripper_finger_joint":0.04,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0.4,"shoulder_pan_joint":1.6056,"shoulder_lift_joint":-0.7112110832854187,"upperarm_roll_joint":-0.5224344562407175,"elbow_flex_joint":-0.2596467353995974,"forearm_roll_joint":0.027744058428229964,"wrist_flex_joint":-0.011999677661943124,"wrist_roll_joint":0.00012972717196553372,"gripper_axis":0.0001297271719655264,"head_pan_joint":0.00005720356139027753,"head_tilt_joint":0.00005283131465981046,"torso_fixed_joint":0.00012972717196555266,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0,"l_gripper_finger_joint":0,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0.4,"shoulder_pan_joint":0.34460326176810346,"shoulder_lift_joint":0.9958007666048422,"upperarm_roll_joint":-1.3788601366395654,"elbow_flex_joint":0.8938364230947411,"forearm_roll_joint":-0.10797832064349865,"wrist_flex_joint":0.6820807432085109,"wrist_roll_joint":0.0001297271719655064,"gripper_axis":0.00012972717196552277,"head_pan_joint":0.00005720356139027753,"head_tilt_joint":0.00005283131465981046,"torso_fixed_joint":0.00012972717196555266,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0.04,"l_gripper_finger_joint":0.04,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0.4,"shoulder_pan_joint":0.0004677854383942246,"shoulder_lift_joint":-1.221,"upperarm_roll_joint":-0.00037940857494373875,"elbow_flex_joint":0.00024155542149740568,"forearm_roll_joint":0.00001232914385335755,"wrist_flex_joint":0.00040145426866142973,"wrist_roll_joint":4.319780384106989e-8,"gripper_axis":4.319780384107232e-8,"head_pan_joint":1.904819311566239e-8,"head_tilt_joint":1.759228026605762e-8,"torso_fixed_joint":4.319780384108353e-8,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0,"l_gripper_finger_joint":0,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0.04,"l_gripper_finger_joint":0.04,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0,"l_gripper_finger_joint":0,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0.04,"l_gripper_finger_joint":0.04,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0,"l_gripper_finger_joint":0,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0.04,"l_gripper_finger_joint":0.04,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0,"r_wheel_joint":0,"l_wheel_joint":0,"r_gripper_finger_joint":0,"l_gripper_finger_joint":0,"bellows_joint":0,"bellows_joint2":0,"estop_joint":0,"laser_joint":0}];
+            [{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0.5,"forearm_roll_joint":0,"wrist_flex_joint":0.5,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":-0.5,"forearm_roll_joint":0,"wrist_flex_joint":-0.5,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":-0.5,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0.5,"elbow_flex_joint":-0.5,"forearm_roll_joint":0.5,"wrist_flex_joint":-0.5,"wrist_roll_joint":0.5,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0.5,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":-0.5,"elbow_flex_joint":0.5,"forearm_roll_joint":-0.5,"wrist_flex_joint":0.5,"wrist_roll_joint":-0.5,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":-0.5,"torso_fixed_joint":0},{"torso_lift_joint":0.5,"shoulder_pan_joint":0.5,"shoulder_lift_joint":0.5,"upperarm_roll_joint":0.5,"elbow_flex_joint":0.5,"forearm_roll_joint":0.5,"wrist_flex_joint":0.5,"wrist_roll_joint":0.5,"gripper_axis":0.5,"head_pan_joint":0.5,"head_tilt_joint":0.5,"torso_fixed_joint":0.5},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0}];
+        // kineval.setpoints = 
+        //     [{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0.4,"shoulder_pan_joint":1.6056,"shoulder_lift_joint":-0.7112110832854187,"upperarm_roll_joint":-0.5224344562407175,"elbow_flex_joint":-0.2596467353995974,"forearm_roll_joint":0.027744058428229964,"wrist_flex_joint":-0.011999677661943124,"wrist_roll_joint":0.00012972717196553372,"gripper_axis":0.0001297271719655264,"head_pan_joint":0.00005720356139027753,"head_tilt_joint":0.00005283131465981046,"torso_fixed_joint":0.00012972717196555266},{"torso_lift_joint":0.4,"shoulder_pan_joint":0.34460326176810346,"shoulder_lift_joint":0.9958007666048422,"upperarm_roll_joint":-1.3788601366395654,"elbow_flex_joint":0.8938364230947411,"forearm_roll_joint":-0.10797832064349865,"wrist_flex_joint":0.6820807432085109,"wrist_roll_joint":0.0001297271719655064,"gripper_axis":0.00012972717196552277,"head_pan_joint":0.00005720356139027753,"head_tilt_joint":0.00005283131465981046,"torso_fixed_joint":0.00012972717196555266},{"torso_lift_joint":0.4,"shoulder_pan_joint":0.0004677854383942246,"shoulder_lift_joint":-1.221,"upperarm_roll_joint":-0.00037940857494373875,"elbow_flex_joint":0.00024155542149740568,"forearm_roll_joint":0.00001232914385335755,"wrist_flex_joint":0.00040145426866142973,"wrist_roll_joint":4.319780384106989e-8,"gripper_axis":4.319780384107232e-8,"head_pan_joint":1.904819311566239e-8,"head_tilt_joint":1.759228026605762e-8,"torso_fixed_joint":4.319780384108353e-8},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0},{"torso_lift_joint":0,"shoulder_pan_joint":0,"shoulder_lift_joint":0,"upperarm_roll_joint":0,"elbow_flex_joint":0,"forearm_roll_joint":0,"wrist_flex_joint":0,"wrist_roll_joint":0,"gripper_axis":0,"head_pan_joint":0,"head_tilt_joint":0,"torso_fixed_joint":0}];
     }
 
     // initialize inverse kinematics target location 
@@ -403,10 +388,9 @@ kineval.initScene = function initScene() {
 
 
     // create grid on floor
-    // (73) gridHelper = new THREE.GridHelper( 50, 5, 0xffc90b, 0x00234c);
-    // (73) gridHelper.setColors(0xffc90b,0x00234c);
-    gridHelper = new THREE.GridHelper( 100, 20, 0xffc90b, 0x00234c);
+    gridHelper = new THREE.GridHelper( 50, 5 );
     gridHelper.translateOnAxis(new THREE.Vector3(0,1,0),0.02);
+    gridHelper.setColors(0xffc90b,0x00234c);
     gridHelper.material.transparent = true;
     gridHelper.material.opacity = 0.2;
     scene.add( gridHelper );
@@ -601,7 +585,6 @@ kineval.initRobotLinksGeoms = function initRobotLinksGeoms() {
         // KE 2 : put robot_material into correct object (fixed below?)
         // KE ! : this may need to be moved back into link for loop
         robot_material = new THREE.MeshLambertMaterial( { color: 0x00234c, transparent: true, opacity: 0.9 } );
-        //robot_material = new THREE.MeshLambertMaterial( { color: 0x00234c, transparent: true, opacity: 0.9, wireframe: true } );
 
     // create a threejs mesh for link of the robot and add it to scene 
     for (x in robot.links) {
@@ -619,59 +602,27 @@ kineval.initRobotLinksGeoms = function initRobotLinksGeoms() {
         robot.links[x].geom.name = "robot_link_"+x;
 
         // add to threejs mesh to scene in world frame
-        // KE : defer this add until child nodes are added to the geom
-        //scene.add(robot.links[x].geom);
-
-        // remove any transform from the threejs geometry for bbox calculation
-        robot.links[x].geom.setRotationFromQuaternion(new THREE.Quaternion(0,0,0,1));
+        scene.add(robot.links[x].geom);
 
         // For collision detection,
         // set the bounding box of robot link in local link coordinates
         robot.links[x].bbox = new THREE.Box3;
         //(THREE r62) robot.links[x].bbox = robot.links[x].bbox.setFromPoints(robot.links[x].geom.geometry.vertices);
-        // setFromObject returns world space bbox
         robot.links[x].bbox = robot.links[x].bbox.setFromObject(robot.links[x].geom);
-        // setFromPoints returns local space bbox, but no child traversal
-        //robot.links[x].bbox = robot.links[x].bbox.setFromPoints(robot.links[x].geom.geometry.vertices);
 
-        /* (73) (does not consider origin offset)
         bbox_geom = new THREE.BoxGeometry(
             robot.links[x].bbox.max.x-robot.links[x].bbox.min.x,
             robot.links[x].bbox.max.y-robot.links[x].bbox.min.y,
             robot.links[x].bbox.max.z-robot.links[x].bbox.min.z
         );
-        */
-       
-        // (92) need to add bbox geometry directly
-        var bbox_geom = new THREE.Geometry();
-        bbox_geom.vertices = []; // for some reason, the allocation above populates the vertices array of the geometry with the dimensions of a bbox
-        bbox_geom.vertices.push(
-            new THREE.Vector3(robot.links[x].bbox.min.x,robot.links[x].bbox.min.y,robot.links[x].bbox.min.z),
-            new THREE.Vector3(robot.links[x].bbox.min.x,robot.links[x].bbox.min.y,robot.links[x].bbox.max.z),
-            new THREE.Vector3(robot.links[x].bbox.min.x,robot.links[x].bbox.max.y,robot.links[x].bbox.min.z),
-            new THREE.Vector3(robot.links[x].bbox.min.x,robot.links[x].bbox.max.y,robot.links[x].bbox.max.z),
-            new THREE.Vector3(robot.links[x].bbox.max.x,robot.links[x].bbox.min.y,robot.links[x].bbox.min.z),
-            new THREE.Vector3(robot.links[x].bbox.max.x,robot.links[x].bbox.min.y,robot.links[x].bbox.max.z),
-            new THREE.Vector3(robot.links[x].bbox.max.x,robot.links[x].bbox.max.y,robot.links[x].bbox.min.z),
-            new THREE.Vector3(robot.links[x].bbox.max.x,robot.links[x].bbox.max.y,robot.links[x].bbox.max.z)
-        );
-
-        bbox_geom.faces.push(
-            new THREE.Face3(0,1,2),
-            new THREE.Face3(1,3,2),
-            new THREE.Face3(4,5,6),
-            new THREE.Face3(5,7,6),
-            new THREE.Face3(1,5,7),
-            new THREE.Face3(1,7,6),
-            new THREE.Face3(2,3,7),
-            new THREE.Face3(2,7,6),
-            new THREE.Face3(0,4,6),
-            new THREE.Face3(0,6,2),
-            new THREE.Face3(0,1,4),
-            new THREE.Face3(1,3,4)
-        );
-
      
+        var i;
+        for (i=0;i<bbox_geom.vertices.length;i++) {
+            bbox_geom.vertices[i].x += (robot.links[x].bbox.max.x-robot.links[x].bbox.min.x)/2 + robot.links[x].bbox.min.x;
+            bbox_geom.vertices[i].y += (robot.links[x].bbox.max.y-robot.links[x].bbox.min.y)/2 + robot.links[x].bbox.min.y;
+            bbox_geom.vertices[i].z += (robot.links[x].bbox.max.z-robot.links[x].bbox.min.z)/2 + robot.links[x].bbox.min.z;
+        }
+
         bbox_material = new THREE.MeshBasicMaterial( { color: 0xFF0000, wireframe:true, visible:true } );
 
         // KE 2 : move bbox_mesh to proper place within link object
@@ -705,9 +656,6 @@ kineval.initRobotLinksGeoms = function initRobotLinksGeoms() {
         robot.links[x].axis_geom_z = new THREE.Line(axis_geom_z,
             new THREE.LineBasicMaterial({color: 0x0000FF}));
         robot.links[x].geom.add(robot.links[x].axis_geom_z);
-
-        // add to threejs mesh to scene in world frame
-        scene.add(robot.links[x].geom);
     }
 
 }
@@ -810,7 +758,6 @@ kineval.initWorldPlanningScene = function initWorldPlanningScene() {
 
     // set rendering geometries of world boundary
     temp_material = new THREE.MeshLambertMaterial( { color: 0xaf8c73, transparent: true, opacity: 0.6} );
-    //temp_material = new THREE.MeshLambertMaterial( { color: 0xaf8c73, transparent: true, opacity: 0.6, wireframe: true} );
 
     temp_geom = new THREE.CubeGeometry(robot_boundary[1][0]-robot_boundary[0][0],0.2,0.2);
     temp_mesh = new THREE.Mesh(temp_geom, temp_material);
@@ -845,7 +792,6 @@ kineval.initWorldPlanningScene = function initWorldPlanningScene() {
     for (i=0;i<robot_obstacles.length;i++) { 
         temp_geom = new THREE.SphereGeometry(robot_obstacles[i].radius);
         temp_material = new THREE.MeshLambertMaterial( { color: 0xaf8c73, transparent: true, opacity: 0.6 } );
-        //temp_material = new THREE.MeshLambertMaterial( { color: 0xaf8c73, transparent: true, opacity: 0.6 , wireframe: true} );
         temp_mesh = new THREE.Mesh(temp_geom, temp_material);
         temp_mesh.position.x = robot_obstacles[i].location[0][0];
         temp_mesh.position.y = robot_obstacles[i].location[1][0];

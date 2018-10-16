@@ -20,6 +20,7 @@ kineval.initRobot = function initRobot() {
 
     // initialize robot collision state
     robot.collision = false;
+    lastseconds = new Date();
 
 }
 
@@ -51,14 +52,18 @@ kineval.initRobotJoints = function initRobotJoints() {
         robot.joints[x].control = 0;
         robot.joints[x].servo = {};
     // STENCIL: set appropriate servo gains for arm setpoint control
-        robot.joints[x].servo.p_gain = 0; 
+        robot.joints[x].servo.p_gain = 0.5; 
         robot.joints[x].servo.p_desired = 0;
         robot.joints[x].servo.d_gain = 0; 
 
     // STENCIL: complete kinematic hierarchy of robot for convenience.
     //   robot description only specifies parent and child links for joints.
     //   additionally specify parent and child joints for each link
-
+        if (typeof robot.links[robot.joints[x].parent].children === 'undefined'){
+            robot.links[robot.joints[x].parent].children = [];
+        }
+        robot.links[robot.joints[x].parent].children.push(x);
+        robot.links[robot.joints[x].child].parent = x;
     }
 
 }
