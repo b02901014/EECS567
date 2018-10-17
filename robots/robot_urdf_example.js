@@ -79,7 +79,17 @@ robot.endeffector.position = [[0.5],[0],[0],[1]]
 
 // define threejs geometries and associate with robot links 
 links_geom = {};
+/*
+robot.joints.joint1 = {parent:"link1", child:"link2"};
+robot.joints.joint1.origin = {xyz: [0.5,0.3,0.0], rpy:[0,0,0]};
+robot.joints.joint1.axis = [-1.0,0.0,0];  // simpler axis 
 
+robot.joints.joint2 = {parent:"link1", child:"link3"};
+//robot.joints.joint2.origin = {xyz: [-0.2,0.5,0], rpy:[0,0,1.57]};
+robot.joints.joint2.origin = {xyz: [-0.2,0.5,0], rpy:[0,0,Math.PI/2]};
+//robot.joints.joint2.axis = [-0.707,0.707,0];
+robot.joints.joint2.axis = [-Math.cos(Math.PI/4),Math.cos(Math.PI/4),0];
+*/
 links_geom["link1"] = new THREE.CubeGeometry( 0.7+0.2, 0.5+0.2, 0.2 );
 links_geom["link1"].applyMatrix( new THREE.Matrix4().makeTranslation((0.5-0.2)/2, 0.5/2, 0) );
 

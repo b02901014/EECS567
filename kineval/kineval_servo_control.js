@@ -22,18 +22,6 @@ kineval.setpointDanceSequence = function execute_setpoints() {
     if (!kineval.params.update_pd_dance) return; 
 
     // STENCIL: implement FSM to cycle through dance pose setpoints
-    
-    if (!kineval.params.update_pd_clock){
-        var curdate = new Date();
-        if (curdate.getSeconds() > lastseconds.getSeconds()){
-            kineval.params.dance_pose_index = kineval.params.dance_sequence_index.shift();
-            for (x in robot.joints) {
-                kineval.params.setpoint_target[x] = kineval.setpoints[kineval.params.dance_pose_index][x];
-            }
-            kineval.params.dance_sequence_index.push(kineval.params.dance_pose_index);
-        }
-        lastseconds = curdate;
-    }
 }
 
 kineval.setpointClockMovement = function execute_clock() {

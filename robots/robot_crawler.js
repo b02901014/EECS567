@@ -188,7 +188,14 @@ robot.joints.leg8_ankle.axis = [1.0,0.0,0.0];
 
 // define threejs geometries and associate with robot links 
 links_geom = {};
-
+/*
+robot.joints.leg1_hip = {parent:"base", child:"leg1_upper"};
+robot.joints.leg1_hip.origin = {xyz: [0.3,0.0,0.9], rpy:[0,Math.PI/2,0]};
+robot.joints.leg1_hip.axis = [0.0,1.0,0.0]; 
+robot.joints.leg1_knee = {parent:"leg1_upper", child:"leg1_middle"};
+robot.joints.leg1_knee.origin = {xyz: [0.0,0.0,0.4], rpy:[-Math.PI/4,0,0]};
+robot.joints.leg1_knee.axis = [1.0,0.0,0.0]; 
+*/
 links_geom["base"] = new THREE.CubeGeometry( 1, 0.4, 2.3 );
 links_geom["base"].applyMatrix( new THREE.Matrix4().makeTranslation(0, 0, 0) );
 
