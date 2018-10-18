@@ -91,7 +91,7 @@ function traverseFKJoint(joint) {
     let angle = robot.joints[joint].angle;
     let axis = robot.joints[joint].axis;
     R_qn = quaternion_to_rotation_matrix(quaternion_normalize(quaternion_from_axisangle(angle, axis))); 
-    
+    //R_qn = generate_identity(4);
     let parent_xform = robot.links[robot.joints[joint].parent].xform;
     let transform = matrix_multiply(trans, rotate);
     robot.joints[joint].xform = matrix_multiply(R_qn, matrix_multiply(parent_xform, transform));

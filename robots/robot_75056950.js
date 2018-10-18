@@ -92,7 +92,7 @@ robot.joints.clavicle_left_roll.origin = {xyz: [-0.3,0.4,0.0], rpy:[-Math.PI/2,0
 robot.joints.clavicle_left_roll.axis = [0.0,0.0,1.0]; 
 
 robot.joints.head_roll = {parent:"clavicle_left", child:"head"};
-robot.joints.head_roll.origin = {xyz: [0.7,0.4,0.0], rpy:[0,0,0]};
+robot.joints.head_roll.origin = {xyz: [0,0,1], rpy:[0,0,0]};
 robot.joints.head_roll.axis = [0.0,0.0,1.0]; 
 
 //leg1
@@ -189,7 +189,7 @@ links_geom["forearm_right"] = new THREE.CubeGeometry( 0.3, 0.3, 0.5 );
 links_geom["forearm_right"].applyMatrix( new THREE.Matrix4().makeTranslation(0, 0, 0.25) );
 
 links_geom["head"] = new THREE.CubeGeometry( 0.7, 0.7, 0.7 );
-links_geom["head"].applyMatrix( new THREE.Matrix4().makeTranslation(-0.7, -0.35, 1.35) );
+links_geom["head"].applyMatrix( new THREE.Matrix4().makeTranslation(0, 0, 0) );
 
 links_geom["leg1_upper"] = new THREE.CubeGeometry( 0.3, 0.3, 0.3 );
 links_geom["leg1_upper"].applyMatrix( new THREE.Matrix4().makeTranslation(0.1, 0.2, 0.15) );
