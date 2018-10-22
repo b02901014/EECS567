@@ -94,7 +94,7 @@ function traverseFKJoint(joint) {
     //R_qn = generate_identity(4);
     let parent_xform = robot.links[robot.joints[joint].parent].xform;
     let transform = matrix_multiply(trans, rotate);
-    robot.joints[joint].xform = matrix_multiply(R_qn, matrix_multiply(parent_xform, transform));
+    robot.joints[joint].xform = matrix_multiply(matrix_multiply(parent_xform, transform), R_qn);
     traverseFKLink(robot.joints[joint].child);
 }
 
