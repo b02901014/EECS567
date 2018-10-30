@@ -28,7 +28,18 @@ kineval.applyControls = function robot_apply_controls() {
         // update joint angles
         robot.joints[x].angle += robot.joints[x].control;
 
-    // STENCIL: enforce joint limits for prismatic and revolute joints
+      // STENCIL: enforce joint limits for prismatic and revolute joints
+        if(robot.link_geom_imported){
+          let type = robot.joints[x].type;
+          if(type == "revolute" || type == "prismatic"){
+            if(robot.joints[x].angle > robot.joints[x].limit.upper)
+              robot.joints[x].angle = robot.joints[x].limit.upper;
+            if(robot.joints[x].angle < robot.joints[x].limit.lower)
+              robot.joints[x].angle = robot.joints[x].limit.lower;
+          }
+          else if(type == "fixed")
+            robot.joints[x].angle = 0;
+        }
 
         // clear controls back to zero for next timestep
         robot.joints[x].control = 0;

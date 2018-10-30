@@ -87,11 +87,19 @@ function traverseFKJoint(joint) {
                                             robot.joints[joint].origin.xyz[1], 
                                             robot.joints[joint].origin.xyz[2]);
     let R_qn;
-
+    let type = robot.joints[joint].type;
     let angle = robot.joints[joint].angle;
     let axis = robot.joints[joint].axis;
-    R_qn = quaternion_to_rotation_matrix(quaternion_normalize(quaternion_from_axisangle(angle, axis))); 
-    //R_qn = generate_identity(4);
+    
+    R_qn = quaternion_to_rotation_matrix(quaternion_normalize(quaternion_from_axisangle(angle, axis)));
+    if (robot.links_geom_imported) {
+      //if(type == "revolute" || type == "continuous")
+      //R_qn = quaternion_to_rotation_matrix(quaternion_normalize(quaternion_from_axisangle(angle, axis)));
+      if(type == "prismatic")
+        R_qn = generate_translation_matrix(angle * axis[0], angle * axis[1], angle * axis[2]);
+      else R_qn = generate_identity(4);
+    }  
+      
     let parent_xform = robot.links[robot.joints[joint].parent].xform;
     let transform = matrix_multiply(trans, rotate);
     robot.joints[joint].xform = matrix_multiply(matrix_multiply(parent_xform, transform), R_qn);

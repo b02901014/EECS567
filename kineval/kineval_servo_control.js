@@ -45,7 +45,10 @@ kineval.robotArmControllerSetpoint = function robot_pd_control () {
 
     // STENCIL: implement P servo controller over joints
     for (x in robot.joints) {
-        robot.joints[x].control = robot.joints[x].servo.p_gain*(kineval.params.setpoint_target[x] - robot.joints[x].angle);
+      let p_gain = robot.joints[x].servo.p_gain;
+      let target = kineval.params.setpoint_target[x];
+      let angle = robot.joints[x].angle;
+      robot.joints[x].control = p_gain * (target - angle);
     }
 }
 
