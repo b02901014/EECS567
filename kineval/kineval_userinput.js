@@ -108,7 +108,8 @@ kineval.handleUserInput = function user_input() {
         if (kineval.params.update_pd_clock) 
             textbar.innerHTML += "<br>executing clock movement about each joint";
         if (kineval.params.update_pd_dance) 
-            textbar.innerHTML += "<br>executing dance routine, pose " + kineval.params.dance_pose_index + " of " + kineval.params.dance_sequence_index.length;
+        textbar.innerHTML += "<br>executing dance routine, pose " + 
+        kineval.params.dance_pose_index + " of " + kineval.params.dance_sequence_index.length;
     }
     if (kineval.params.update_ik||kineval.params.persist_ik) { 
         if (!kineval.params.trial_ik_random.execute) 

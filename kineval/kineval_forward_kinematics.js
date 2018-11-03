@@ -62,9 +62,9 @@ function traverseFKBase() {
     
     if (robot.links_geom_imported) {
       let rotx_fixed = generate_rotation_matrix_X(-Math.PI/2);
-      let rotz_fixed = generate_rotation_matrix_Z(-Math.PI/2);
-      let ros_fixed = matrix_multiply(rotx_fixed, rotz_fixed);
-      robot.links[robot.base].xform = matrix_multiply(ros_fixed, robot.links[robot.base].xform);
+      let roty_fixed = generate_rotation_matrix_Y(-Math.PI/2);
+      let ros_fixed = matrix_multiply(roty_fixed, rotx_fixed);
+      robot.links[robot.base].xform = matrix_multiply(robot.links[robot.base].xform, ros_fixed);
     }
 }
 
@@ -97,7 +97,7 @@ function traverseFKJoint(joint) {
       //R_qn = quaternion_to_rotation_matrix(quaternion_normalize(quaternion_from_axisangle(angle, axis)));
       if(type == "prismatic")
         R_qn = generate_translation_matrix(angle * axis[0], angle * axis[1], angle * axis[2]);
-      else R_qn = generate_identity(4);
+      else if(type == "fixed") R_qn = generate_identity(4);
     }  
       
     let parent_xform = robot.links[robot.joints[joint].parent].xform;

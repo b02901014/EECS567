@@ -16,49 +16,55 @@
 
 |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| |\/| --*/
 
-kineval.applyControls = function robot_apply_controls() {
+kineval.applyControls = function robot_apply_controls(curRobot) {
     // apply robot controls to robot kinematics transforms and joint angles, then zero controls
     // includes update of camera position based on base movement
 
     // update robot configuration from controls
-    for (x in robot.joints) {
-        if (isNaN(robot.joints[x].control))
-            console.warn("kineval: control value for " + x +" is a nan"); //+robot.joints[x].control);
+    for (x in curRobot.joints) {
 
         // update joint angles
-        robot.joints[x].angle += robot.joints[x].control;
+        if ( (typeof curRobot.joints[x].type !== 'undefined')
+             || (typeof curRobot.joints[x].type !== 'fixed') ) { 
 
-      // STENCIL: enforce joint limits for prismatic and revolute joints
-        if(robot.link_geom_imported){
-          let type = robot.joints[x].type;
-          if(type == "revolute" || type == "prismatic"){
-            if(robot.joints[x].angle > robot.joints[x].limit.upper)
-              robot.joints[x].angle = robot.joints[x].limit.upper;
-            if(robot.joints[x].angle < robot.joints[x].limit.lower)
-              robot.joints[x].angle = robot.joints[x].limit.lower;
-          }
-          else if(type == "fixed")
-            robot.joints[x].angle = 0;
+            if (isNaN(curRobot.joints[x].control))
+                console.warn("kineval: control value for " + x +" is a nan");
+
+            curRobot.joints[x].angle += curRobot.joints[x].control;
         }
 
-        // clear controls back to zero for next timestep
-        robot.joints[x].control = 0;
+    // STENCIL: enforce joint limits for prismatic and revolute joints
+    if(curRobot.links_geom_imported){
+      let type = curRobot.joints[x].type;
+      if(type == "revolute" || type == "prismatic"){
+        if(curRobot.joints[x].angle > curRobot.joints[x].limit.upper)
+          curRobot.joints[x].angle = curRobot.joints[x].limit.upper;
+        if(curRobot.joints[x].angle < curRobot.joints[x].limit.lower)
+          curRobot.joints[x].angle = curRobot.joints[x].limit.lower;
+        }
+        else if(type == "fixed")
+          curRobot.joints[x].angle = 0;
     }
 
+        // clear controls back to zero for next timestep
+        curRobot.joints[x].control = 0;
+    }
+
+//console.log(curRobot); 
     // base motion
-    robot.origin.xyz[0] += robot.control.xyz[0];
-    robot.origin.xyz[1] += robot.control.xyz[1];
-    robot.origin.xyz[2] += robot.control.xyz[2];
-    robot.origin.rpy[0] += robot.control.rpy[0];
-    robot.origin.rpy[1] += robot.control.rpy[1];
-    robot.origin.rpy[2] += robot.control.rpy[2];
+    curRobot.origin.xyz[0] += curRobot.control.xyz[0];
+    curRobot.origin.xyz[1] += curRobot.control.xyz[1];
+    curRobot.origin.xyz[2] += curRobot.control.xyz[2];
+    curRobot.origin.rpy[0] += curRobot.control.rpy[0];
+    curRobot.origin.rpy[1] += curRobot.control.rpy[1];
+    curRobot.origin.rpy[2] += curRobot.control.rpy[2];
 
     // move camera with robot base
-    camera_controls.object.position.x += robot.control.xyz[0];
-    camera_controls.object.position.y += robot.control.xyz[1];
-    camera_controls.object.position.z += robot.control.xyz[2];
+    camera_controls.object.position.x += curRobot.control.xyz[0];
+    camera_controls.object.position.y += curRobot.control.xyz[1];
+    camera_controls.object.position.z += curRobot.control.xyz[2];
 
     // zero controls now that they have been applied to robot
-    robot.control = {xyz: [0,0,0], rpy:[0,0,0]}; 
+    curRobot.control = {xyz: [0,0,0], rpy:[0,0,0]}; 
 }
 
