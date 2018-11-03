@@ -49,14 +49,14 @@ function traverseFKBase() {
     let rot_x = generate_rotation_matrix_X(robot.origin.rpy[0]);
     let rot_y = generate_rotation_matrix_Y(robot.origin.rpy[1]);
     let rot_z = generate_rotation_matrix_Z(robot.origin.rpy[2]);
-    let rotate = matrix_multiply(matrix_multiply(rot_x, rot_y), rot_z);
+    let rotate = matrix_multiply(matrix_multiply(rot_z, rot_y), rot_x);
     let trans = generate_translation_matrix(robot.origin.xyz[0], 
                                             robot.origin.xyz[1], 
                                             robot.origin.xyz[2]);
     robot.links[robot.base].xform = matrix_multiply(trans, rotate);
 
-    let local_heading = [0, 0, 1, 1];
-    let local_lateral = [1, 0, 0, 1];
+    let local_heading = [[0], [0], [1], [1]];
+    let local_lateral = [[1], [0], [0], [1]];
     robot_heading = matrix_multiply(robot.links[robot.base].xform,local_heading);
     robot_lateral = matrix_multiply(robot.links[robot.base].xform,local_lateral);
     
@@ -82,7 +82,7 @@ function traverseFKJoint(joint) {
     let rot_x = generate_rotation_matrix_X(robot.joints[joint].origin.rpy[0]);
     let rot_y = generate_rotation_matrix_Y(robot.joints[joint].origin.rpy[1]);
     let rot_z = generate_rotation_matrix_Z(robot.joints[joint].origin.rpy[2]);
-    let rotate = matrix_multiply(matrix_multiply(rot_x, rot_y), rot_z);
+    let rotate = matrix_multiply(matrix_multiply(rot_z, rot_y), rot_x);
     let trans = generate_translation_matrix(robot.joints[joint].origin.xyz[0], 
                                             robot.joints[joint].origin.xyz[1], 
                                             robot.joints[joint].origin.xyz[2]);
