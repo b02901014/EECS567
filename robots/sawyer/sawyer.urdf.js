@@ -8,7 +8,9 @@ robot = {
   name:"sawyer", 
   base:"pedestal", 
   //base:"right_arm_base_link", 
-  origin:{ xyz: [0,0.1,0], rpy:[0,0,0] },
+  //origin:{ xyz: [0,0.1,0], rpy:[0,0,0] },
+  origin:{ xyz: [0,0.86488,0], rpy:[0,0,0] },
+
   links: {
 /*
     "base": {}, // empty link
@@ -264,7 +266,8 @@ robot.joints.torso_lift_joint.limit = {lower:0, upper:0.4};
 robot.joints.pedestal_fixed = {parent:"pedestal", child:"right_arm_base_link"};
 robot.joints.pedestal_fixed.axis = [0,0,1];
 robot.joints.pedestal_fixed.type = "fixed";
-robot.joints.pedestal_fixed.origin = {xyz: [0,0,0.86488], rpy:[0,0,0]};
+robot.joints.pedestal_fixed.origin = {xyz: [0,0,0], rpy:[0,0,0]};
+//robot.joints.pedestal_fixed.origin = {xyz: [0,0,0.86488], rpy:[0,0,0]};
 robot.joints.pedestal_fixed.limit = {lower:0, upper:0};
 
 robot.joints.right_j0 = {parent:"right_arm_base_link", child:"right_l0"};

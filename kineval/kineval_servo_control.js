@@ -25,16 +25,16 @@ kineval.setpointDanceSequence = function execute_setpoints() {
     
   //if (!kineval.params.update_pd_clock){
   else{
-        var curdate = new Date();
-        if (curdate.getSeconds() > lastseconds.getSeconds()){
-               
+      var curr_time = new Date();
+      time += 1;
+      if (curr_time.getSeconds() > prev_time.getSeconds()){
             kineval.params.dance_pose_index = kineval.params.dance_sequence_index.shift();
             kineval.params.dance_sequence_index.push(kineval.params.dance_pose_index);
             for (x in robot.joints) {
                 kineval.params.setpoint_target[x] = kineval.setpoints[kineval.params.dance_pose_index][x];
             }
         }
-        lastseconds = curdate;
+        prev_time = curr_time;
     }
 }
 

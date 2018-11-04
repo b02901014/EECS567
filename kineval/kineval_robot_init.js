@@ -20,7 +20,8 @@ kineval.initRobot = function initRobot() {
 
     // initialize robot collision state
     robot.collision = false;
-    lastseconds = new Date();
+    prev_time = new Date();
+    time = 0;
 
 }
 
