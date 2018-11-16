@@ -70,15 +70,15 @@ kineval.iterateIK = function iterate_inverse_kinematics(endeffector_target_world
                            Math.sqrt(trans_end2world[2][1]**2 + trans_end2world[2][2]**2));
   let world_y = Math.atan2(trans_end2world[1][0], trans_end2world[0][0]);
   let world_angle = [world_r, world_p, world_y];
-
   //console.log("cal delta_x");
   let delta_x = [];
   for(let i = 0; i < 6; ++i){
     delta_x[i] = [];
     if(i < 3) delta_x[i][0] = endeffector_target_world.position[i] - world_pos[i][0];
     else{
-      if(kineval.params.ik_orientation_included)
-        delta_x[i][0] = endeffector_target_world.orientation[i-3] - world_angle[i];
+      if(kineval.params.ik_orientation_included){
+        delta_x[i][0] = endeffector_target_world.orientation[i-3] - world_angle[i-3];
+      }
       else delta_x[i][0] = 0;
     }
   }
@@ -143,7 +143,7 @@ kineval.iterateIK = function iterate_inverse_kinematics(endeffector_target_world
   else{
     state_control = matrix_multiply(jacob, delta_x);
   }
-  
+  console.log(state_control); 
   curr_joint = endeffector_joint;
   count = 0;
   while(1){
