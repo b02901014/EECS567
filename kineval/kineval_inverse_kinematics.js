@@ -52,9 +52,9 @@ kineval.randomizeIKtrial = function randomIKtrial () {
        kineval.params.ik_target.position[1][0] = 1.2 * (Math.random() - 0.5) + 1.5;
        kineval.params.ik_target.position[2][0] = 0.7 * (Math.random() - 0.5) + 0.5;
        kineval.params.trial_ik_random.targets += 1;
-      textbar.innerHTML = "Target reached: " + 
+      textbar.innerHTML = "IK trial Random: target" + 
         kineval.params.trial_ik_random.targets + " reached at time " + 
-        kineval.params.trial_ik_random.time / 1000.0 + "sec";
+        kineval.params.trial_ik_random.time;
     }
 }
 
