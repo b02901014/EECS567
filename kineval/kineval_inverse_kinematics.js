@@ -133,8 +133,12 @@ kineval.iterateIK = function iterate_inverse_kinematics(endeffector_target_world
   //console.log("state control");
   state_control = [];
   if(kineval.params.ik_pseudoinverse){
-    pseudo_inv = matrix_pseudoinverse(matrix_transpose(jacob));
+    //console.log("pseudo: ");
+    //pseudo_inv = matrix_pseudoinverse(matrix_transpose(jacob));
+    pseudo_inv = numeric.inv(matrix_multiply(matrix_transpose(jacob), jacob));
+    pseudo_inv = matrix_multiply(jacob, pseudo_inv);
     state_control = matrix_multiply(pseudo_inv, delta_x)
+    //console.log(pseudo_inv, state_control);
   }
   else{
     state_control = matrix_multiply(jacob, delta_x);
