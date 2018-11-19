@@ -46,8 +46,8 @@ Assignment 4 feature 21 (2.00/2): FSMDance_JointLimits: CHECK
     comment: good work
 Assignment 4 feature 22 (2.00/2): FSMDance_Prismatic: CHECK
     comment: good work
-Assignment 4 feature 23 (2.00/2): FSMDance_Rosbridge: CHECK
-    comment: good work
+Assignment 4 feature 23 (0.00/2): FSMDance_Rosbridge: PENDING
+    
 Assignment 5 feature 24 (0.00/6): IK_Jacobian: PENDING
     
 Assignment 5 feature 25 (0.00/3): IK_JTranspose: PENDING
