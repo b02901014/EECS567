@@ -54,7 +54,7 @@ kineval.poseIsCollision = function robot_collision_test(q) {
         return robot.base;
 
     // traverse robot kinematics to test each body for collision
-    // STENCIL: implement forward kinematics for collision detection
+  // STENCIL: implement forward kinematics for collision detection
     return robot_collision_forward_kinematics(q);
 
 }
@@ -77,10 +77,9 @@ function robot_collision_forward_kinematics(q){
 }
 
 function traverse_collision_forward_kinematics_link(link,mstack,q) {
-
     /* test collision FK
     console.log(link);
-    */
+    console.log(link);
     if (typeof link.visual !== 'undefined') {
         var local_link_xform = matrix_multiply(mstack,generate_translation_matrix(link.visual.origin.xyz[0],link.visual.origin.xyz[1],link.visual.origin.xyz[2]));
     }
@@ -88,6 +87,7 @@ function traverse_collision_forward_kinematics_link(link,mstack,q) {
         var local_link_xform = matrix_multiply(mstack,generate_identity());
     }
 
+    */
     // test collision by transforming obstacles in world to link space
 /*
     mstack_inv = matrix_invert_affine(mstack);
@@ -135,7 +135,7 @@ function traverse_collision_forward_kinematics_link(link,mstack,q) {
     if (typeof link.children !== 'undefined') { // return if there are no children
         var local_collision;
         //for (i=0;i<link.children.length;i++) {
-        for (i in link.children) {
+      for (i in link.children) {
             local_collision = traverse_collision_forward_kinematics_joint(robot.joints[link.children[i]],mstack,q)
             if (local_collision)
                 return local_collision;

@@ -5,7 +5,7 @@ kineval.initrosbridge = function init_rosbridge() {
 ros = new ROSLIB.Ros({
     //url : 'ws://192.168.1.152:9090'
     //url : 'ws://fetch7:9090'
-    url : 'ws://fetch7.lan:9090'
+    //url : 'ws://fetch7.lan:9090'
     //url : 'ws://fetch18.lan:9090'
     //url : 'ws://fetch18.lan:9092'
     //url : 'ws://fetch7.lan:9092'
