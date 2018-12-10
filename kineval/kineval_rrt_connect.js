@@ -134,15 +134,15 @@ kineval.robotRRTPlannerInit = function robot_rrt_planner_init() {
 function robot_rrt_planner_iterate() {
 
     var i;
-    rrt_alg = 2;  // 0: basic rrt (OPTIONAL), 1: rrt_connect (REQUIRED)
+    rrt_alg = 1;  // 0: basic rrt (OPTIONAL), 1: rrt_connect (REQUIRED)
 
     if (rrt_iterate && (Date.now()-cur_time > 10)) {
       cur_time = Date.now();
         
       rrt_iter_count += 1;
+      let last = T_a.newest;
       let q_rand = random_config();
       T_a = rrt_extend(T_a, q_rand);
-      let last = T_a.newest;
       if(rrt_alg == 0){
         if(cal_dist(T_a.vertices[T_a.newest].vertex, q_goal_config)< eps*0.8){
           kineval.motion_plan_traversal_index = 0;
@@ -181,11 +181,10 @@ function robot_rrt_planner_iterate() {
             }
             kineval.motion_pan_traversal_index = 0;
             if(start == 1){
-              kineval.motion_plan = (path[0].reverse()).concat(path[1]);
+              kineval.motion_plan = path[0].concat(path[1]);
             }
             else{
-              kineval.motion_plan = (path[1].reverse()).concat(path[0]);
-            
+              kineval.motion_plan = path[1].concat(path[0]);
             }
             return "reached";
           }
