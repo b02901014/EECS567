@@ -168,23 +168,29 @@ function robot_rrt_planner_iterate() {
           let q_new = T_a.vertices[T_a.newest].vertex;
           if(rrt_connect(q_new)){
             rrt_iterate = false;
+            
             let path_Ta = [], path_Tb = [];
             let path = [path_Ta, path_Tb];
             let Tree = [T_a, T_b];
             let start = 0;
-
+            
             for(let i = 0; i < 2; ++i){
               let path_idx = Tree[i].newest;
-              if(path_idx == 0 && i == 0)
-                start = 1;
-              path[i] = path_dfs(Tree[i]);
+              while(path_idx != null){
+                if(path_idx == 0 && i == 0){
+                  start = 1;
+                }
+                path[i].push(Tree[i].vertices[path_idx]);
+                Tree[i].vertices[path_idx].geom.material.color = {r:0,g:0,b:1};
+                path_idx = Tree[i].vertices[path_idx].parent;
+              }
             }
             kineval.motion_pan_traversal_index = 0;
             if(start == 1){
-              kineval.motion_plan = path[0].concat(path[1]);
+              kineval.motion_plan = (path[0].reverse()).concat(path[1]);
             }
             else{
-              kineval.motion_plan = path[1].concat(path[0]);
+              kineval.motion_plan = (path[1].reverse()).concat(path[0]);
             }
             return "reached";
           }
