@@ -76,17 +76,17 @@ function initSearch() {
     //search_alg = "depth-first";  
     //search_alg = "breadth-first";  
     //search_alg = "greedy-best-first";  
-    search_alg = "A-star";  
-    //search_alg = "RRT";  
+    //search_alg = "A-star";  
+    search_alg = "RRT";  
     //search_alg = "RRT-connect";  
     //search_alg = "RRT-star";  
 
     // specify default the world for the planner 
     //  (stored as "range" global variable with name "planning_scene")
     //planning_scene = "empty";
-    planning_scene = "misc";
+    //planning_scene = "misc";
     //planning_scene = "narrow1";
-    //planning_scene = "narrow2";
+    planning_scene = "narrow2";
     //planning_scene = "three_sections";
 
     // specify default eps (epsilon) spatial resolution variable
@@ -368,8 +368,24 @@ function iterateGraphSearch() {
 
 
 function iterateRRT() {
-
-
+    search_visited += 1;
+    let q_rand = randomConfig();
+    let last = T_a.newest;
+    T_a = extendRRT(T_a, q_rand);
+    if(calDist(T_a.vertices[T_a.newest].vertex, q_goal) < eps/2){
+      search_iterate = false;
+      drawHighlightedPath(dfsPath(T_a));
+      let path = dfsPath(T_a);
+      return "succeeded";
+    }
+    else if(last == T_a.newest){
+      search_iterate = true;
+      return "failed";
+    }
+    else{
+      search_iterate = true;
+      return "extended";
+    }
     // STENCIL: implement a single iteration of an RRT algorithm.
     //   An asynch timing mechanism is used instead of a for loop to avoid 
     //   blocking and non-responsiveness in the browser.
@@ -388,8 +404,33 @@ function iterateRRT() {
 }
 
 function iterateRRTConnect() {
+    let q_rand = randomConfig();
+    let last = T_a.newest;
+    T_a = extendRRT(T_a, q_rand);
+    if(calDist(T_a.vertices[T_a.newest].vertex, q_goal) < eps/2){
+      search_iterate = false;
+      drawHighlightedPath(dfsPath(T_a));
+      return "succeeded";
+    }
+    else if(last == T_a.newest){
+      search_iterate = true;
+      return "failed";
+    }
 
-
+    else{
+      let q_new = T_a.vertices[T_a.newest].vertex;
+      if(connectRRT(q_new)){
+        search_iterate = false;
+        drawHighlightedPath(dfsPath(T_a));
+        drawHighlightedPath(dfsPath(T_b));
+        return "succeeded";
+      }
+      let tmp = T_a;
+      T_a = T_b;
+      T_b = tmp;
+      search_iterate = true;
+      return "extended";
+    }
     // STENCIL: implement a single iteration of an RRT-Connect algorithm.
     //   An asynch timing mechanism is used instead of a for loop to avoid 
     //   blocking and non-responsiveness in the browser.
@@ -409,7 +450,83 @@ function iterateRRTConnect() {
 }
 
 function iterateRRTStar() {
+  console.log("rrtstar");
+  let q_rand = randomConfig();
+  let last = T_a.newest;
+  let q_nearest_idx = findNearestNeighbor(T_a, q_rand);
+  let q_new = newConfig(q_rand, T_a.vertices[q_nearest_idx].vertex);
+  if(!testCollision(q_new)){
+    console.log(q_new);
+    let q_neighbors = findNeighbors(q_new, 2*eps);
+    let q_min_idx = chooseParent(q_neighbors, q_nearest_idx, q_new);
+    rewire(q_neighbors, q_min_idx);
+  }
+  if(calDist(T_a.vertices[T_a.newest].vertex, q_goal) < eps/2){
+    search_iterate = false;
+    let q_idx = T_a.newest;
+    let path = [];
+    while(q_idx != 0){
+      path.push(T_a.vertices[q_idx]);
+      q_idx = T_a.vertices[q_idx].parent;
+    }
+    path.push(T_a.vertices[0]);
+    drawHighlightedPath(path);
+    return "succeeded";
+  }
+  else if(last == T_a.newest){
+    search_iterate = true;
+    return "failed";
+  }
+  else{
+    search_iterate = true;
+    return "extended";
+  }
+}
 
+function rewire(q_neighbors, q_min_idx){
+  console.log("rewire");
+  for(let i = 0; i < q_neighbors.length; ++i){
+    if(q_neighbors[i] != q_min_idx){
+      let cost = T_a.vertices[T_a.newest].cost + calDist(T_a.vertices[q_neighbors[i]].vertex, 
+                                                         T_a.vertices[T_a.newest].vertex);
+      if(cost < T_a.vertices[q_neighbors[i]].cost){
+        T_a.vertices[q_neighbors[i]].parent = T_a.newest;
+        T_a.vertices[q_neighbors[i]].parent.cost = cost;
+      }
+    }
+  }
+}
+
+function findNeighbors(q_new, rad){
+  console.log("findNeighbor");
+  let neighbors = [];
+  for(let i = 0; i <= T_a.newest; ++i){
+    let dist = calDist(q_new, T_a.vertices[i].vertex);
+    if(dist < rad){
+      neighbors.push(i);
+    }
+  }
+  return neighbors;
+}
+
+function chooseParent(neighbors, nearest, q_new){
+  console.log("chooseparent");
+  let min_idx = nearest;
+  let min_cost = T_a.vertices[nearest].cost + eps;
+  for(let i  = 0; i < neighbors.length; ++i){
+    if(neighbors[i] != nearest){
+      let cost = T_a.vertices[neighbors[i]].cost + calDist(T_a.vertices[neighbors[i]].vertex, q_new);
+      if(cost < min_cost){
+        min_idx = neighbors[i];
+        min_cost = cost;
+      }
+    }
+  }
+  insertTreeVertex(T_a, q_new);
+  insertTreeEdge(T_a, nearest, T_a.newest);
+  T_a.vertices[T_a.newest].cost = min_cost;
+  T_a.vertices[T_a.newest].parent = min_idx;
+  return min_idx;
 }
 
 //////////////////////////////////////////////////
@@ -744,6 +861,83 @@ minHeaper.extract = minheap_extract;
     //   newConfig
     //   findNearestNeighbor
     //   dfsPath
+
+    function calDist(q1, q2){
+      dist = 0;
+      for(let i = 0; i < q1.length; ++i){
+        dist += (q1[i] - q2[i]) ** 2;
+      }
+      return Math.sqrt(dist);
+    }
+
+    function extendRRT(tree, q_rand){
+      let nearest = findNearestNeighbor(tree, q_rand);
+      let q_new = newConfig(q_rand, tree.vertices[nearest].vertex);
+      if(!testCollision(q_new)){
+        insertTreeVertex(tree, q_new);
+        insertTreeEdge(tree, nearest, tree.newest);
+        tree.vertices[tree.newest].parent = tree.vertices[nearest];
+      }
+      return tree;
+    }
+
+    function randomConfig(){
+      if(Math.random() > 0.2){
+        let x_rand = -2 + Math.floor(Math.random()*G.length)*eps;
+        let y_rand = -2 + Math.floor(Math.random()*G[0].length)*eps;
+        return [x_rand, y_rand];
+      }
+      else{
+        return q_goal;
+      }
+    }
+    
+    function findNearestNeighbor(tree, q_rand){
+      let i;
+      let idx = 0;
+      let dist = calDist(q_rand, tree.vertices[0].vertex);
+      for(let i = 1; i <= tree.newest; ++i){
+        let new_dist = calDist(q_rand, tree.vertices[i].vertex);
+        if(dist > new_dist){
+          dist = new_dist;
+          idx = i
+        }
+      }
+      return idx;
+    }
+
+    function newConfig(q_rand, q_nearest){
+      let dist = calDist(q_rand, q_nearest);
+      let prop = eps / dist;
+      let q_new = [];
+      for(let i = 0; i < q_rand.length; ++i){
+        q_new.push(q_nearest[i] + (q_rand[i] - q_nearest[i])*prop);
+      }
+      //q_new.parent = q_nearest;
+      return q_new;
+    }
+    
+    function connectRRT(q_new){
+        while(calDist(T_b.vertices[T_b.newest].vertex, q_new) >= eps/2){
+        let last = T_b.newest;
+        T_b = extendRRT(T_b, q_new);
+        if(last == T_b.newest){
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function dfsPath(tree){
+      let path = [tree.vertices[tree.newest]];
+      let curr = tree.vertices[tree.newest];
+      while(curr.parent!= null){
+        path.push(curr.parent);
+        curr = curr.parent;
+      }
+
+      return path.reverse();
+    }
 
 </script>
 
