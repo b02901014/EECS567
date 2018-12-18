@@ -86,8 +86,8 @@ function traverse_collision_forward_kinematics_link(link,mstack,q) {
     else {
         var local_link_xform = matrix_multiply(mstack,generate_identity());
     }
-
     */
+
     // test collision by transforming obstacles in world to link space
 /*
     mstack_inv = matrix_invert_affine(mstack);
